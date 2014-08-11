@@ -8,6 +8,7 @@
 
 #import "SecondItemViewController.h"
 #import "ChatViewController.h"
+#import "ChatMessageModel.h"
 
 @interface SecondItemViewController () <UITableViewDataSource,UITableViewDelegate,recentMessagesDelegate>
 - (IBAction)swipeRightToLeft:(UISwipeGestureRecognizer *)sender;
@@ -34,14 +35,9 @@
     [super viewDidLoad];
     [self.swipeLeftToRightProperty setDirection:(UISwipeGestureRecognizerDirectionLeft| UISwipeGestureRecognizerDirectionLeft )];
     [self.view addGestureRecognizer:self.swipeLeftToRightProperty];
-    self.recentsTableView.delegate = self;
-    self.recentsTableView.dataSource = self;
-    //self.recentMessages = [[NSMutableArray alloc]init];
-    // set_delegate vor init recentMessages
-    
-    ChatViewController *someVC = [[ChatViewController alloc]init];
-    someVC.delegateMSG = self;
-    
+    //self.recentsTableView.delegate = self;
+    //self.recentsTableView.dataSource = self;
+    self.recentMessages = [[NSMutableArray alloc]init];
 }
 
 - (void)didReceiveMemoryWarning
@@ -72,7 +68,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
     }
     
-    //cell.textLabel.text =
+    cell.textLabel.text = [[self.recentMessages objectAtIndex:indexPath.row]userName];
     
     
     return cell;
