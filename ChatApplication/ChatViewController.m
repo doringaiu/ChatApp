@@ -129,10 +129,6 @@ NSString *const myUserID = @"Dorin";
     }
 }
 
--(void)viewWillDisappear:(BOOL)animated
-{
-    [self.delegateMSG loadRecievedMessages:self.recievedMessages];
-}
 
 -(void)viewDidAppear:(BOOL)animated
 {
