@@ -37,6 +37,10 @@
     self.recentsTableView.delegate = self;
     self.recentsTableView.dataSource = self;
     //self.recentMessages = [[NSMutableArray alloc]init];
+    // set_delegate vor init recentMessages
+    
+    ChatViewController *someVC = [[ChatViewController alloc]init];
+    someVC.delegateMSG = self;
     
 }
 
