@@ -9,7 +9,7 @@
 #import "SecondItemViewController.h"
 #import "ChatViewController.h"
 
-@interface SecondItemViewController () <UITableViewDataSource,UITableViewDelegate>
+@interface SecondItemViewController () <UITableViewDataSource,UITableViewDelegate,recentMessagesDelegate>
 - (IBAction)swipeRightToLeft:(UISwipeGestureRecognizer *)sender;
 @property (strong, nonatomic) IBOutlet UISwipeGestureRecognizer *swipeLeftToRightProperty;
 - (IBAction)swipeLeftToRight:(UISwipeGestureRecognizer *)sender;
@@ -54,6 +54,11 @@
     [self.tabBarController setSelectedIndex:2];
 }
 
+-(void)loadRecievedMessages : (NSMutableArray*)recievedMSG
+{
+    self.recentMessages = [[NSMutableArray alloc]initWithArray:recievedMSG];
+}
+
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellID = @"DefaultCell";
@@ -63,7 +68,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
     }
     
-    //cell.textLabel.text = @"some shit";
+    //cell.textLabel.text =
     
     
     return cell;
