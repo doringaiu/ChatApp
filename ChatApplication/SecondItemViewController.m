@@ -10,7 +10,7 @@
 #import "ChatViewController.h"
 #import "ChatMessageModel.h"
 
-@interface SecondItemViewController () <UITableViewDataSource,UITableViewDelegate,recentMessagesDelegate>
+@interface SecondItemViewController () <UITableViewDataSource,UITableViewDelegate>
 - (IBAction)swipeRightToLeft:(UISwipeGestureRecognizer *)sender;
 @property (strong, nonatomic) IBOutlet UISwipeGestureRecognizer *swipeLeftToRightProperty;
 - (IBAction)swipeLeftToRight:(UISwipeGestureRecognizer *)sender;
@@ -70,12 +70,13 @@
     
     cell.textLabel.text = [[self.recentMessages objectAtIndex:indexPath.row]userName];
     
-    
+    NSLog(@"asdasd");
     return cell;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [self.recentMessages count];
+    NSLog(@"%i",[self.recentMessages count]);
 }
 @end
