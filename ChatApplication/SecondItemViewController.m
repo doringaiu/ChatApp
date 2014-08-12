@@ -15,7 +15,8 @@
 @property (strong, nonatomic) IBOutlet UISwipeGestureRecognizer *swipeLeftToRightProperty;
 - (IBAction)swipeLeftToRight:(UISwipeGestureRecognizer *)sender;
 @property (weak, nonatomic) IBOutlet UITableView *recentsTableView;
-@property NSMutableArray *recentMessages;
+- (IBAction)pinchGestureRefresh:(UIPinchGestureRecognizer *)sender;
+@property (strong, nonatomic) IBOutlet UIPinchGestureRecognizer *pinchGestureProperty;
 
 @end
 
@@ -35,6 +36,8 @@
     [super viewDidLoad];
     [self.swipeLeftToRightProperty setDirection:(UISwipeGestureRecognizerDirectionLeft| UISwipeGestureRecognizerDirectionLeft )];
     [self.view addGestureRecognizer:self.swipeLeftToRightProperty];
+    [self.view addGestureRecognizer:self.pinchGestureProperty];
+    
     //self.recentsTableView.delegate = self;
     //self.recentsTableView.dataSource = self;
     self.recentMessages = [[NSMutableArray alloc]init];
@@ -46,17 +49,11 @@
     // Dispose of any resources that can be recreated.
 }
 
-
 - (IBAction)swipeRightToLeft:(UISwipeGestureRecognizer *)sender {
     [self.tabBarController setSelectedIndex:0];
 }
 - (IBAction)swipeLeftToRight:(UISwipeGestureRecognizer *)sender {
     [self.tabBarController setSelectedIndex:2];
-}
-
--(void)loadRecievedMessages : (NSMutableArray*)recievedMSG
-{
-    self.recentMessages = [[NSMutableArray alloc]initWithArray:recievedMSG];
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -77,6 +74,13 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [self.recentMessages count];
-    NSLog(@"%i",[self.recentMessages count]);
+}
+
+- (IBAction)pinchGestureRefresh:(UIPinchGestureRecognizer *)sender {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *path = [documentsDirectory stringByAppendingPathComponent:@"listOfMSG.plist"];
+    self.recentMessages = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
+    [self.recentsTableView reloadData];
 }
 @end

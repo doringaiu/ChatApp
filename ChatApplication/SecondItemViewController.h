@@ -8,16 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-//@protocol recentMessagesDelegate <NSObject>
-//
-//@required
-//
-//-(void)loadRecievedMessages : (NSMutableArray*)recievedMSG;
-//
-//@end
-
 @interface SecondItemViewController : UIViewController
-
-//@property (nonatomic,weak) id<recentMessagesDelegate>delegateMSG;
-
+@property NSMutableArray *recentMessages;
 @end

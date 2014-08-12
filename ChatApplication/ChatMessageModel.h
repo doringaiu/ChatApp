@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
 
-@interface ChatMessageModel : NSObject
+@interface ChatMessageModel : NSObject <NSCoding>
 
 @property (copy,nonatomic) NSString *messageText;
 @property (strong,nonatomic) NSDate *date;

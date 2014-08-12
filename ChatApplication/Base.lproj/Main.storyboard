@@ -265,7 +265,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="oC6-UF-Mzc">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="oC6-UF-Mzc">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="517"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -291,11 +291,17 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Messages" image="New" id="x69-k0-iMt"/>
                     <connections>
+                        <outlet property="pinchGestureProperty" destination="U8S-25-pJp" id="Ttc-OS-t7L"/>
                         <outlet property="recentsTableView" destination="oC6-UF-Mzc" id="jV9-Le-p00"/>
                         <outlet property="swipeLeftToRightProperty" destination="o0O-48-AGe" id="3Ah-r8-isZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="88L-Pm-aMS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <pinchGestureRecognizer id="U8S-25-pJp">
+                    <connections>
+                        <action selector="pinchGestureRefresh:" destination="eXK-ym-exT" id="vpK-Oi-n4t"/>
+                    </connections>
+                </pinchGestureRecognizer>
                 <swipeGestureRecognizer direction="right" id="DbP-2a-JST">
                     <connections>
                         <action selector="swipeRightToLeft:" destination="eXK-ym-exT" id="Hd1-sl-zxY"/>

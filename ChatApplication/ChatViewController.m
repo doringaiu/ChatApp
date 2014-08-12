@@ -14,7 +14,7 @@
 
 NSString *const myUserID = @"Dorin";
 
-@interface ChatViewController () <MessageFetcherDelegate>
+@interface ChatViewController () <MessageFetcherDelegate,NSCoding>
 
 
 @property (weak, nonatomic) IBOutlet UITextField *sendMessageTextField;
@@ -61,6 +61,7 @@ NSString *const myUserID = @"Dorin";
                                                  selector:@selector(keyboardWillDisappear)
                                                      name:UIKeyboardWillHideNotification
                                                    object:nil];
+        self.recievedMessages = [aDecoder decodeObjectForKey:@"recievedMessages"];
     }
     
     return self;
@@ -148,6 +149,21 @@ NSString *const myUserID = @"Dorin";
 {
     self.tabBarController.tabBar.hidden = NO;
    // [[self.scrollViewChat subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]; //  clear scroll view
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    self.pathMSG = [documentsDirectory stringByAppendingPathComponent:@"listOfMSG.plist"]; NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    if (![fileManager fileExistsAtPath: self.pathMSG])
+    {
+        self.pathMSG = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat: @"listOfMSG.plist"] ];
+    }
+    
+    [NSKeyedArchiver archiveRootObject:self.recievedMessages toFile:self.pathMSG];
+    
 }
 
 
@@ -285,4 +301,15 @@ NSString *const myUserID = @"Dorin";
 - (IBAction)swToRecents:(UISwipeGestureRecognizer *)sender {
     [self.tabBarController setSelectedIndex:1];
 }
+
+-(void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.recievedMessages forKey:@"recievedMessages"];
+}
+
+//-(id)initWithCoder:(NSCoder *) decoder
+//{
+//    self.recievedMessages = [decoder decodeObjectForKey:@"recievedMessages"];
+//    return self;
+//}
 @end

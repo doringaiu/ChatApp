@@ -9,12 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "NewMessages.h"
 
-
-
 @interface ChatViewController : UIViewController
 
 @property float messageHeight;
 @property NSMutableArray *recievedMessages;
 @property int cUserID; // set value when swiping from selectedContactVC
+@property NSString *pathMSG;
 
 @end

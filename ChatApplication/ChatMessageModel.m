@@ -51,4 +51,19 @@ NSString *const ParseUserID = @"userName";
     return messageObject;
 }
 
+-(void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.messageText forKey:@"messageText"];
+    [encoder encodeObject:self.userName forKey:@"userName"];
+    [encoder encodeObject:self.date forKey:@"date"];
+}
+
+-(id)initWithCoder:(NSCoder *)decoder
+{
+    self.messageText = [decoder decodeObjectForKey:@"messageText"];
+    self.userName = [decoder decodeObjectForKey:@"userName"];
+    self.date = [decoder decodeObjectForKey:@"date"];
+    return self;
+}
+
 @end
