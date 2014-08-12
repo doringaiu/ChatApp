@@ -15,6 +15,4 @@
 -(void) RemoveContact: (int) contactID;
 -(int) sizeOfList;
 -(MyContact*) contactAtIndex : (int) index;
--(void) sortByName;
--(void) initWithSomeData;
 @end

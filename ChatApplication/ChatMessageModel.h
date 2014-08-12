@@ -13,9 +13,9 @@
 
 @property (copy,nonatomic) NSString *messageText;
 @property (strong,nonatomic) NSDate *date;
-@property NSString *userName;
+@property (strong,nonatomic)NSString *userName;
 
--(instancetype) initWithMessageText:(NSString*)messageText : (NSDate*) date : (int) userName;
+-(instancetype) initWithMessageText:(NSString*)messageText : (NSDate*) date : (NSString*) userName;
 - (instancetype)initWithMessageObject:(PFObject *)parseObject;
 - (PFObject *)parseObjectRepresentation;
 

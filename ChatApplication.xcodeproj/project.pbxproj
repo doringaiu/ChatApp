@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		541D197D1986737B0063C3BA /* NewMessages.m in Sources */ = {isa = PBXBuildFile; fileRef = 541D197C1986737B0063C3BA /* NewMessages.m */; };
 		5434E0C219823E440036941C /* MyContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 5434E0BF19823E440036941C /* MyContact.m */; };
 		5434E0C319823E440036941C /* MyContactsBook.m in Sources */ = {isa = PBXBuildFile; fileRef = 5434E0C119823E440036941C /* MyContactsBook.m */; };
 		5434E0C6198247D70036941C /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5434E0C5198247D70036941C /* ChatViewController.m */; };
@@ -57,8 +56,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		541D197B1986737B0063C3BA /* NewMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewMessages.h; sourceTree = "<group>"; };
-		541D197C1986737B0063C3BA /* NewMessages.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewMessages.m; sourceTree = "<group>"; };
 		5434E0BE19823E440036941C /* MyContact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyContact.h; sourceTree = "<group>"; };
 		5434E0BF19823E440036941C /* MyContact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyContact.m; sourceTree = "<group>"; };
 		5434E0C019823E440036941C /* MyContactsBook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyContactsBook.h; sourceTree = "<group>"; };
@@ -153,8 +150,6 @@
 				5434E0BF19823E440036941C /* MyContact.m */,
 				5434E0C019823E440036941C /* MyContactsBook.h */,
 				5434E0C119823E440036941C /* MyContactsBook.m */,
-				541D197B1986737B0063C3BA /* NewMessages.h */,
-				541D197C1986737B0063C3BA /* NewMessages.m */,
 				5438B2231993A2D000338925 /* ChatMessageModel.h */,
 				5438B2241993A2D000338925 /* ChatMessageModel.m */,
 				5438B2261993A95800338925 /* MessageSender.h */,
@@ -370,7 +365,6 @@
 			files = (
 				5434E0C219823E440036941C /* MyContact.m in Sources */,
 				54A1C5441980ED4C0097EAFB /* InitialTabBarController.m in Sources */,
-				541D197D1986737B0063C3BA /* NewMessages.m in Sources */,
 				5434E0C6198247D70036941C /* ChatViewController.m in Sources */,
 				54A1C573198142960097EAFB /* SelectedContactViewController.m in Sources */,
 				54A1C54A1980EDBB0097EAFB /* SecondItemViewController.m in Sources */,

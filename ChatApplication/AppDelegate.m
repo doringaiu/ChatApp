@@ -9,8 +9,6 @@
 #import "AppDelegate.h"
 #import <Parse/Parse.h>
 
-//NSString *const ApplicationID = @"EdftQ0ksFfajEA5fulSJbXp5xVhccizk77GNBWrh";
-//NSString *const ClientKey = @"R6CeafjYn2LtkTQUw7haByjN8IPrY5UhOOEmX7En";
 NSString *const ApplicationID = @"j2E9RhdFxUvDaSy40j27NO02ogRVq8TN8jtGaLLU";
 NSString *const ClientKey = @"wn3hsvLc6hBn1iqS8kv8XZo14MPhtpttcF9GqAGM";
 

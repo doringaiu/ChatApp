@@ -9,12 +9,6 @@
 #import "MessageFetcher.h"
 #import <Parse/Parse.h>
 
-@interface MessageFetcher ()
-
-//@property (copy, nonatomic, readwrite) NSArray *allMSG;
-
-@end
-
 @implementation MessageFetcher
 
 - (void)fetchMessages {
@@ -23,9 +17,7 @@
         if (!error) {
             self.allMesages = objects;
             [self.delegate messageFetcherDidFinishFetching:self];
-            //NSLog(@"Received messages: %@", self.allMesages);
         }
     }];
-    
 }
 @end

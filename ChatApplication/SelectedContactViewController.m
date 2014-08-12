@@ -21,24 +21,18 @@
 @property (strong, nonatomic) IBOutlet UISwipeGestureRecognizer *swChatProperty;
 @property UIImagePickerController *imagePicker;
 @property UIImage *imageFromGallery;
+
 - (IBAction)saveChanges:(UIButton *)sender;
--(IBAction)textFieldReturn:(id)sender;
--(void)didTapImage;
+- (IBAction)textFieldReturn:(id)sender;
 - (IBAction)swBack:(UISwipeGestureRecognizer *)sender;
 - (IBAction)swChat:(UISwipeGestureRecognizer *)sender;
+- (void)didTapImage;
 
 @end
 
 @implementation SelectedContactViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
+#pragma mark - default view methods
 
 - (void)viewDidLoad
 {
@@ -60,17 +54,11 @@
         // Add the tap gesture recognizer to the view
 
     [self.imageOfTheSelectedContact addGestureRecognizer:tapRecognizer];
-    // Do any additional setup after loading the view, typically from a nib
     self.tabBarController.tabBar.hidden = YES;
     
     [self.swChatProperty setDirection:(UISwipeGestureRecognizerDirectionLeft | UISwipeGestureRecognizerDirectionLeft )];
     [self.view addGestureRecognizer:self.swChatProperty];
-    
     self.imagePicker = [[UIImagePickerController alloc] init];
-}
-
--(void)viewDidAppear:(BOOL)animated
-{
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -79,19 +67,15 @@
     self.tabBarController.tabBar.hidden = NO;
 }
 
--(void)viewDidDisappear:(BOOL)animated
+- (void)viewDidDisappear:(BOOL)animated
 {
     self.tabBarController.tabBar.hidden = NO;
 }
 
--(void)didTapImage
-{
-    self.imagePicker.delegate = self;
-    self.imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    [self presentViewController:self.imagePicker animated:YES completion:nil];
-}
 
--(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+#pragma mark - image picker methods
+
+- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     NSURL *mediaURL;
     UIImage *image;
@@ -103,15 +87,7 @@
     self.imageOfTheSelectedContact.alpha = 1.0;
 }
 
-- (IBAction)swBack:(UISwipeGestureRecognizer *)sender {
-    [self.navigationController popToRootViewControllerAnimated:YES];
-    [self.tabBarController setSelectedIndex:0];
-}
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+#pragma mark - save button
 
 - (IBAction)saveChanges:(UIButton *)sender {
     MyContact *tempContact = [[MyContact alloc]init];
@@ -143,7 +119,9 @@
     
 }
 
--(IBAction)textFieldReturn:(id)sender
+#pragma mark - methods for dismissing the keyboard
+
+- (IBAction)textFieldReturn:(id)sender
 {
     [self.view endEditing:YES];
 }
@@ -154,16 +132,25 @@
     [super touchesBegan:touches withEvent:event];
 }
 
+#pragma mark - gestures
 
 - (IBAction)swChat:(UISwipeGestureRecognizer *)sender {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ChatViewController *chatVC = [[ChatViewController alloc]init];
     chatVC = [storyboard instantiateViewControllerWithIdentifier:@"ChatViewController"];
-    //[cInfoViewController setTextFields:[self.dataSource.listOfContacts objectAtIndex:self.selectedRow]];
-    //cInfoViewController.selectedContact = [self.dataSource.listOfContacts objectAtIndex:self.selectedRow];
-    //cInfoViewController.editContactDelegateVar = self;
     [self.navigationController pushViewController:chatVC animated:YES];
-    
+}
+
+- (IBAction)swBack:(UISwipeGestureRecognizer *)sender {
+    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.tabBarController setSelectedIndex:0];
+}
+
+- (void)didTapImage
+{
+    self.imagePicker.delegate = self;
+    self.imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    [self presentViewController:self.imagePicker animated:YES completion:nil];
 }
 
 @end

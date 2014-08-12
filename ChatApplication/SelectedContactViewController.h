@@ -18,7 +18,6 @@
 @end
 
 @interface SelectedContactViewController : UIViewController
-
 @property (nonatomic,weak) id<initContactFieldsDelegate>initContactsDelegate;
 @property MyContact *contact;
 @property bool addNewContactWasPressed;

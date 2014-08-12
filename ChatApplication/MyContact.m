@@ -8,25 +8,31 @@
 
 #import "MyContact.h"
 
+NSString *const firstNameKey = @"firstName";
+NSString *const lastNameKey = @"lastName";
+NSString *const phoneKey = @"contactPhoneNumber";
+NSString *const imageKey = @"imageContact";
+NSString *const ageKey = @"age";
+
 @implementation MyContact
 
 -(void)encodeWithCoder:(NSCoder *)encoder
 {
-    [encoder encodeObject:self.firstName forKey:@"firstName"];
-    [encoder encodeObject:self.lastName forKey:@"lastName"];
-    [encoder encodeObject:[NSNumber numberWithInt:self.age] forKey:@"age"];
-    [encoder encodeObject:[NSNumber numberWithInt:self.contactPhoneNumber] forKey:@"contactPhoneNumber"];
-    [encoder encodeObject:UIImagePNGRepresentation(self.imageContact) forKey:@"imageContact"];
+    [encoder encodeObject:self.firstName forKey:firstNameKey];
+    [encoder encodeObject:self.lastName forKey:lastNameKey];
+    [encoder encodeObject:[NSNumber numberWithInt:self.age] forKey:ageKey];
+    [encoder encodeObject:[NSNumber numberWithInt:self.contactPhoneNumber] forKey:phoneKey];
+    [encoder encodeObject:UIImagePNGRepresentation(self.imageContact) forKey:imageKey];
     
 }
 
 -(id)initWithCoder:(NSCoder *)decoder
 {
-    self.firstName = [decoder decodeObjectForKey:@"firstName"];
-    self.lastName = [decoder decodeObjectForKey:@"lastName"];
-    self.age = (int) [[decoder decodeObjectForKey:@"age"]intValue];
-    self.contactPhoneNumber = (int) [[decoder decodeObjectForKey:@"contactPhoneNumber"]intValue];
-    self.imageContact = [UIImage imageWithData:[decoder decodeObjectForKey:@"imageContact"]];
+    self.firstName = [decoder decodeObjectForKey:firstNameKey];
+    self.lastName = [decoder decodeObjectForKey:lastNameKey];
+    self.age = (int) [[decoder decodeObjectForKey:ageKey]intValue];
+    self.contactPhoneNumber = (int) [[decoder decodeObjectForKey:phoneKey]intValue];
+    self.imageContact = [UIImage imageWithData:[decoder decodeObjectForKey:imageKey]];
     return self;
 }
 

@@ -10,7 +10,5 @@
 @class ChatMessageModel;
 
 @interface MessageSender : NSObject
-
 -(void)sendMessage: (ChatMessageModel*)message;
-
 @end

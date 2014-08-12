@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ChatApplication/MessageFetcher.m"
-            timestampString = "429185297.693237"
+            timestampString = "429535823.492391"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
+            startingLineNumber = "18"
+            endingLineNumber = "18"
             landmarkName = "-fetchMessages"
             landmarkType = "5">
          </BreakpointContent>

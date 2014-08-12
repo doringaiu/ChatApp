@@ -11,13 +11,10 @@
 @class MessageFetcher;
 
 @protocol MessageFetcherDelegate <NSObject>
-
 - (void)messageFetcherDidFinishFetching:(MessageFetcher *)fetcher;
-
 @end
 
 @interface MessageFetcher : NSObject
-
 @property (weak,nonatomic) id<MessageFetcherDelegate> delegate;
 @property (copy,nonatomic) NSArray *allMesages;
 -(void)fetchMessages;

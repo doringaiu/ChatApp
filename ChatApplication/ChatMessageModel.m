@@ -12,7 +12,6 @@ NSString *const ParseTextMessageKey = @"messageText";
 NSString *const ParseTextDateKey = @"date";
 NSString *const ParseUserID = @"userName";
 
-
 @implementation ChatMessageModel
 
 -(instancetype)initWithMessageText:(NSString *)messageText :(NSDate *)date :(NSString*)userName
@@ -51,18 +50,20 @@ NSString *const ParseUserID = @"userName";
     return messageObject;
 }
 
+#pragma mark - NSCoding required methods
+
 -(void)encodeWithCoder:(NSCoder *)encoder
 {
-    [encoder encodeObject:self.messageText forKey:@"messageText"];
-    [encoder encodeObject:self.userName forKey:@"userName"];
-    [encoder encodeObject:self.date forKey:@"date"];
+    [encoder encodeObject:self.messageText forKey:ParseTextMessageKey];
+    [encoder encodeObject:self.userName forKey:ParseUserID];
+    [encoder encodeObject:self.date forKey:ParseTextDateKey];
 }
 
 -(id)initWithCoder:(NSCoder *)decoder
 {
-    self.messageText = [decoder decodeObjectForKey:@"messageText"];
-    self.userName = [decoder decodeObjectForKey:@"userName"];
-    self.date = [decoder decodeObjectForKey:@"date"];
+    self.messageText = [decoder decodeObjectForKey:ParseTextMessageKey];
+    self.userName = [decoder decodeObjectForKey:ParseUserID];
+    self.date = [decoder decodeObjectForKey:ParseTextDateKey];
     return self;
 }
 

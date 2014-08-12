@@ -8,6 +8,8 @@
 
 #import "MyContactsBook.h"
 
+NSString *const listKey = @"listOfContacts";
+
 @implementation MyContactsBook
 
 - (id)init {
@@ -30,7 +32,6 @@
     MyContact *editContact = [[MyContact alloc] init];
 
     [self.listOfContacts insertObject:editContact atIndex:contactId];
-
 }
 
 -(void) RemoveContact : (int)contactId
@@ -48,45 +49,14 @@
     return [self.listOfContacts objectAtIndex:index];
 }
 
--(void) sortByName
-{
-    MyContact *tempContact = [[MyContact alloc]init];
-    for(int i=0;i<[self sizeOfList];i++)
-    {
-        tempContact = [self.listOfContacts objectAtIndex:i];
-        tempContact.firstName = [[self.listOfContacts objectAtIndex:i]firstName];
-        tempContact.firstName = [tempContact.firstName stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[tempContact.firstName substringToIndex:1] capitalizedString]];
-        [self.listOfContacts replaceObjectAtIndex:i withObject:tempContact];
-    }
-
-    NSSortDescriptor *sortDescriptor;
-    sortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"firstName" ascending:YES];
-    NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-    NSArray *sortedArray;
-    sortedArray = [self.listOfContacts sortedArrayUsingDescriptors:sortDescriptors];
-    self.listOfContacts = [sortedArray mutableCopy];
-}
-
--(void) initWithSomeData
-{
-    MyContact *aContact = [[MyContact alloc] init];
-    aContact.firstName = @"PList";
-    aContact.lastName = @"Works";
-    aContact.age = 23;
-    aContact.contactPhoneNumber = 46464646;
-    aContact.imageContact = nil;
-    [self.listOfContacts addObject:aContact];
-  
-}
-
 -(void)encodeWithCoder:(NSCoder *)encoder
 {
-    [encoder encodeObject:self.listOfContacts forKey:@"listOfContacts"];
+    [encoder encodeObject:self.listOfContacts forKey:listKey];
 }
 
 -(id)initWithCoder:(NSCoder *) decoder
 {
-    self.listOfContacts = [decoder decodeObjectForKey:@"listOfContacts"];
+    self.listOfContacts = [decoder decodeObjectForKey:listKey];
     return self;
 }
 

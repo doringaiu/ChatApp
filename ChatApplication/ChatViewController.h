@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "NewMessages.h"
 
 @interface ChatViewController : UIViewController
 

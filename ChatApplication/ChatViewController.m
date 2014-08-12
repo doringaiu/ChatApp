@@ -13,12 +13,13 @@
 #import <Parse/Parse.h>
 
 NSString *const myUserID = @"Dorin";
+NSString *const emptyString = @"";
+NSString *const messagesFileName = @"listOfMSG.plist";
+NSString *const recievedMessagesKey = @"recievedMessages";
 
 @interface ChatViewController () <MessageFetcherDelegate,NSCoding>
 
-
 @property (weak, nonatomic) IBOutlet UITextField *sendMessageTextField;
-
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *textBoxBottomConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *sendMessageBottomConstraint;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollViewChat;
@@ -30,22 +31,23 @@ NSString *const myUserID = @"Dorin";
 @property uint numberOfInsertedElements;
 @property (strong, nonatomic) NSTimer *refreshTimer;
 
--(bool)checkForNewMessages;
+- (BOOL)checkForNewMessages;
 - (IBAction)textFieldReturn:(id)sender;
 - (IBAction)checkButtonPressed:(UIButton *)sender;
 - (IBAction)sendMessageButton:(UIButton *)sender;
 - (IBAction)swBack:(UISwipeGestureRecognizer *)sender;
 - (IBAction)swToRecents:(UISwipeGestureRecognizer *)sender;
 
-
-
 @end
 
 @implementation ChatViewController
 
+#pragma mark - NSCoding required methods
+
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
+        // call checkButtonPressed in each 5 seconds
         _refreshTimer = [NSTimer scheduledTimerWithTimeInterval:5
                                                          target:self
                                                        selector:@selector(checkButtonPressed:)
@@ -61,12 +63,16 @@ NSString *const myUserID = @"Dorin";
                                                  selector:@selector(keyboardWillDisappear)
                                                      name:UIKeyboardWillHideNotification
                                                    object:nil];
-        self.recievedMessages = [aDecoder decodeObjectForKey:@"recievedMessages"];
+        self.recievedMessages = [aDecoder decodeObjectForKey:recievedMessagesKey];
     }
     
     return self;
 }
 
+-(void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.recievedMessages forKey:recievedMessagesKey];
+}
 
 #pragma mark - Custom Accessors
 
@@ -100,25 +106,20 @@ NSString *const myUserID = @"Dorin";
     {
         ChatMessageModel *tempMSG = [[ChatMessageModel alloc]initWithMessageObject:newMSGs[i]];
         
-        //if(tempMSG.userID!=0)
-        //{
-            [self.listOfMessages addObject:tempMSG];
+        [self.listOfMessages addObject:tempMSG];
         [self.recievedMessages addObject:tempMSG];
-        //}
-        
         self.numberOfInsertedElements++;
     }
     
 }
 
+#pragma mark - Default View Methods
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationItem.title = @"x";
-
     self.listOfMessages = [[NSMutableArray alloc]init];
     self.recievedMessages = [[NSMutableArray alloc] init];
-
+    
     [self.swToRecentsProperty setDirection:(UISwipeGestureRecognizerDirectionLeft | UISwipeGestureRecognizerDirectionLeft )];
     [self.view addGestureRecognizer:self.swToRecentsProperty];
     
@@ -130,7 +131,6 @@ NSString *const myUserID = @"Dorin";
     }
 }
 
-
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -138,6 +138,25 @@ NSString *const myUserID = @"Dorin";
     
 }
 
+-(void)viewDidDisappear:(BOOL)animated
+{
+    self.tabBarController.tabBar.hidden = NO;
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    self.pathMSG = [documentsDirectory stringByAppendingPathComponent:messagesFileName]; NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    if (![fileManager fileExistsAtPath: self.pathMSG])
+    {
+        self.pathMSG = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat: messagesFileName] ];
+    }
+    
+    [NSKeyedArchiver archiveRootObject:self.recievedMessages toFile:self.pathMSG];
+    
+}
 
 - (void)dealloc {
     [_refreshTimer invalidate];
@@ -145,108 +164,88 @@ NSString *const myUserID = @"Dorin";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
--(void)viewDidDisappear:(BOOL)animated
-{
-    self.tabBarController.tabBar.hidden = NO;
-   // [[self.scrollViewChat subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]; //  clear scroll view
-}
-
--(void)viewWillDisappear:(BOOL)animated
-{
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    self.pathMSG = [documentsDirectory stringByAppendingPathComponent:@"listOfMSG.plist"]; NSFileManager *fileManager = [NSFileManager defaultManager];
-    
-    if (![fileManager fileExistsAtPath: self.pathMSG])
-    {
-        self.pathMSG = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat: @"listOfMSG.plist"] ];
-    }
-    
-    [NSKeyedArchiver archiveRootObject:self.recievedMessages toFile:self.pathMSG];
-    
-}
-
-
 -(IBAction)textFieldReturn:(id)sender
 {
-    [self.view endEditing:YES];
+    [self.view endEditing:YES]; // dismiss keyboard
 }
+
+#pragma mark - Labels for Displaying Messages
+
+- (void)createLabelForMyMessage:(NSString *)nameAndText {
+    CGRect aRect;
+    UILabel *sentMessageLabel;
+    aRect = CGRectMake(120,self.messageHeight, 200, 100);
+    sentMessageLabel = [[UILabel alloc]initWithFrame:aRect];
+    
+    sentMessageLabel.text = nameAndText;
+    sentMessageLabel.numberOfLines = 0; //will wrap text in new line
+    [sentMessageLabel sizeToFit];
+    CGPoint newOrigin;
+    newOrigin.y = sentMessageLabel.frame.origin.y;
+    float actualWidth = sentMessageLabel.frame.size.width;
+    if(actualWidth<239)
+    {
+        newOrigin.x = 320 - actualWidth;
+        CGRect tempRectangle = CGRectMake(newOrigin.x, newOrigin.y, actualWidth, sentMessageLabel.frame.size.height);
+        sentMessageLabel.frame = tempRectangle;
+    }
+    
+    [self.scrollViewChat addSubview:sentMessageLabel];
+    sentMessageLabel.textColor = [UIColor whiteColor];
+    sentMessageLabel.backgroundColor = [UIColor grayColor];
+    sentMessageLabel.layer.masksToBounds = YES;
+    sentMessageLabel.layer.cornerRadius = 4;
+    
+    self.messageHeight += sentMessageLabel.frame.size.height+20;
+    self.scrollViewChat.contentSize = CGSizeMake(320, 10+self.messageHeight+100);
+}
+
+- (void)CreateLabelForOtherUsersMessages:(NSString *)nameAndText {
+    CGRect aRect;
+    UILabel *recievedMessageLabel;
+    aRect = CGRectMake(0, 10+self.messageHeight, 200, 100);
+    recievedMessageLabel = [[UILabel alloc]initWithFrame:aRect];
+    
+    recievedMessageLabel.text = nameAndText;
+    recievedMessageLabel.numberOfLines = 0;
+    [recievedMessageLabel sizeToFit];
+    
+    [self.scrollViewChat addSubview:recievedMessageLabel];
+    recievedMessageLabel.backgroundColor = [UIColor colorWithRed:.55 green:.7 blue:.55 alpha:0.9];
+    recievedMessageLabel.textColor = [UIColor whiteColor];
+    recievedMessageLabel.layer.masksToBounds = YES;
+    self.messageHeight += recievedMessageLabel.frame.size.height+20;
+    recievedMessageLabel.layer.cornerRadius = 4;
+    self.scrollViewChat.contentSize = CGSizeMake(320, 10+self.messageHeight+100);
+}
+
+#pragma mark - Check for new messages functions
 
 - (IBAction)checkButtonPressed:(UIButton *)sender {
     if([self checkForNewMessages])
     {
-        CGRect aRect;
-        UILabel *recievedMessageLabel;
-        UILabel *sentMessageLabel;
-        
         self.didFinishFetching = false;
-
+        
         for(int i=0;i<[self.listOfMessages count];i++)
         {
             NSString *currentUserName = [[self.listOfMessages objectAtIndex:i]userName];
             NSInteger swVar = 1;
-            if([currentUserName isEqualToString:@"Dorin"])
-            {
+            
+            if([currentUserName isEqualToString:myUserID]){
                 swVar = 0;
             }
-        
+            
             NSString *nameAndText = [NSString stringWithFormat:@"%@  %@: \n %@",[[self.listOfMessages objectAtIndex:i]userName]
                                      ,[[self.listOfMessages objectAtIndex:i]date]
                                      ,[[self.listOfMessages objectAtIndex:i]messageText]];
-            //switch([[[self.listOfMessages objectAtIndex:i]userName] isEqualToString:myUserID])
             switch(swVar)
             {
                 case 0:
-                    aRect = CGRectMake(120,self.messageHeight, 200, 100);
-                    sentMessageLabel = [[UILabel alloc]initWithFrame:aRect];
-                    
-
-                    //sentMessageLabel.text = [[self.listOfMessages objectAtIndex:i]messageText];
-                    sentMessageLabel.text = nameAndText;
-                    sentMessageLabel.numberOfLines = 0; //will wrap text in new line
-                    [sentMessageLabel sizeToFit];
-                    CGPoint newOrigin;
-                    newOrigin.y = sentMessageLabel.frame.origin.y;
-                    float actualWidth = sentMessageLabel.frame.size.width;
-                    if(actualWidth<239)
-                    {
-                        newOrigin.x = 320 - actualWidth;
-                        CGRect tempRectangle = CGRectMake(newOrigin.x, newOrigin.y, actualWidth, sentMessageLabel.frame.size.height);
-                        sentMessageLabel.frame = tempRectangle;
-                    }
-                    
-                    [self.scrollViewChat addSubview:sentMessageLabel];
-                    sentMessageLabel.textColor = [UIColor whiteColor];
-                    sentMessageLabel.backgroundColor = [UIColor grayColor];
-                    sentMessageLabel.layer.masksToBounds = YES;
-                    sentMessageLabel.layer.cornerRadius = 4;
-                    
-                    self.messageHeight += sentMessageLabel.frame.size.height+20;
-                    self.scrollViewChat.contentSize = CGSizeMake(320, 10+self.messageHeight+100);
+                    [self createLabelForMyMessage:nameAndText];
                     break;
                 default:
                 {
-                    //uint tempUserID = [[self.listOfMessages objectAtIndex:i]userName];
-                    aRect = CGRectMake(0, 10+self.messageHeight, 200, 100);
-                    recievedMessageLabel = [[UILabel alloc]initWithFrame:aRect];
-                    
-                    //
-                   // NSString *nameAndText = [NSString stringWithFormat:@"%@: \n %@",[[self.listOfMessages objectAtIndex:i]userName]
-                                            // ,[[self.listOfMessages objectAtIndex:i]messageText]];
-                    //
-            
-                    //recievedMessageLabel.text = [[self.listOfMessages objectAtIndex:i]messageText];
-                    recievedMessageLabel.text = nameAndText;
-                    recievedMessageLabel.numberOfLines = 0; //will wrap text in new line
-                    [recievedMessageLabel sizeToFit];
-                    
-                    [self.scrollViewChat addSubview:recievedMessageLabel];
-                    recievedMessageLabel.backgroundColor = [UIColor colorWithRed:.55 green:.7 blue:.55 alpha:0.9];
-                    recievedMessageLabel.textColor = [UIColor whiteColor];
-                    recievedMessageLabel.layer.masksToBounds = YES;
-                    self.messageHeight += recievedMessageLabel.frame.size.height+20;
-                    recievedMessageLabel.layer.cornerRadius = 4;
-                    self.scrollViewChat.contentSize = CGSizeMake(320, 10+self.messageHeight+100);
+                    [self CreateLabelForOtherUsersMessages:nameAndText];
                     break;
                 }
             }
@@ -255,32 +254,23 @@ NSString *const myUserID = @"Dorin";
     }
 }
 
-
 -(BOOL) checkForNewMessages
 {
     [self.fetcher fetchMessages];
     return self.didFinishFetching;
 }
 
-
+#pragma mark - send Message methods
 
 - (IBAction)sendMessageButton:(UIButton *)sender {
-//    NewMessages *sendMessage = [[NewMessages alloc]init];
-//    sendMessage.message = self.sendMessageTextField.text;
-//    sendMessage.userID = 0; // my userID
-//    [self.listOfMessages addObject:sendMessage];
-//    [self.recievedMessages addObject:sendMessage];
-    
     NSString *messageText = self.sendMessageTextField.text;
-    if([messageText isEqualToString:@""] || messageText==nil) return;
+    if([messageText isEqualToString:emptyString] || messageText==nil) return;
     
     NSDate *currentDate = [NSDate date];
     ChatMessageModel *message = [[ChatMessageModel alloc] initWithMessageText:messageText :currentDate :myUserID];
     [self.messageSender sendMessage:message];
     
-    self.sendMessageTextField.text = @"";
-    //[self.listOfMessages addObject:message]; // array for display sent and recieved MSGs
-    //[self.recievedMessages addObject:message];
+    self.sendMessageTextField.text = emptyString;
     [self.view endEditing:YES];
 }
 
@@ -295,21 +285,14 @@ NSString *const myUserID = @"Dorin";
     self.sendMessageBottomConstraint.constant = 9;
 }
 
+#pragma mark - Gesture functions
+
 - (IBAction)swBack:(UISwipeGestureRecognizer *)sender {
         [self.navigationController popViewControllerAnimated:YES];
 }
+
 - (IBAction)swToRecents:(UISwipeGestureRecognizer *)sender {
     [self.tabBarController setSelectedIndex:1];
 }
 
--(void)encodeWithCoder:(NSCoder *)encoder
-{
-    [encoder encodeObject:self.recievedMessages forKey:@"recievedMessages"];
-}
-
-//-(id)initWithCoder:(NSCoder *) decoder
-//{
-//    self.recievedMessages = [decoder decodeObjectForKey:@"recievedMessages"];
-//    return self;
-//}
 @end

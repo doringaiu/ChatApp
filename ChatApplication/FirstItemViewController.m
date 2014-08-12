@@ -10,6 +10,9 @@
 #import "SelectedContactViewController.h"
 #include <Parse/Parse.h>
 
+NSString *const contactsFileName = @"listOfContacts.plist";
+NSString *const topBarTitle = @"My Contacts";
+
 @interface FirstItemViewController () <initContactFieldsDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *contactsTableView;
 @property (weak, nonatomic) IBOutlet UINavigationBar *topBar;
@@ -24,36 +27,6 @@
 
 @implementation FirstItemViewController
 
--(void) saveEditedContact : (MyContact*)aContact
-{
-    [self.dataSource.listOfContacts replaceObjectAtIndex:self.selectedRow withObject:aContact];
-    if(self.path)
-    {
-        [NSKeyedArchiver archiveRootObject:self.dataSource toFile:self.path];
-    }
-      [self.contactsTableView reloadData];
-}
-
--(void) saveNewContact:(MyContact *)aContact
-{
-    [self.dataSource.listOfContacts addObject:aContact];
-
-    if(self.path)
-    {
-        [NSKeyedArchiver archiveRootObject:self.dataSource toFile:self.path];
-    }
-        [self.contactsTableView reloadData];
-}
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -63,7 +36,7 @@
     self.contactsTableView.delegate = self;
     self.contactsTableView.dataSource = self;
 
-    self.topBar.topItem.title = @"My Contacts";
+    self.topBar.topItem.title = topBarTitle;
     
     self.editButton = [[UIBarButtonItem alloc]
                                    initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
@@ -76,34 +49,15 @@
     [self.swipeToRightProperty setDirection:(UISwipeGestureRecognizerDirectionLeft | UISwipeGestureRecognizerDirectionLeft )];
     [self.view addGestureRecognizer:self.swipeToRightProperty];
     
-    // check if file Exists
-//    static bool appLaunch = true;
-//    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"listOfContactsFile" ofType:@"plist"];
-//    //
-//    [self.dataSource initWithSomeData];
-//    [NSKeyedArchiver archiveRootObject:self.dataSource toFile:plistPath];
-//    //
-//    if(plistPath!=nil && appLaunch==true)
-//    {
-//        appLaunch = false;
-//        self.dataSource = [NSKeyedUnarchiver unarchiveObjectWithFile:plistPath];
-//        [self.contactsTableView reloadData];
-//        
-//    }
-    
-    
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // create a pList or init the data if it already exists
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    self.path = [documentsDirectory stringByAppendingPathComponent:@"listOfContacts.plist"]; NSFileManager *fileManager = [NSFileManager defaultManager];
-    
-//    [self.dataSource initWithSomeData];
-//    [NSKeyedArchiver archiveRootObject:self.dataSource toFile:self.path];
+    self.path = [documentsDirectory stringByAppendingPathComponent:contactsFileName];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
     
     if (![fileManager fileExistsAtPath: self.path])
     {
-        self.path = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat: @"listOfContacts.plist"] ];
+        self.path = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat: contactsFileName] ];
     }
     
     static bool appStarted = true;
@@ -113,10 +67,9 @@
         appStarted = false;
     }
     
-//    PFObject *testObject = [PFObject objectWithClassName:@"TestObject"];
-//    testObject[@"foo"] = @"bar";
-//    [testObject saveInBackground];
 }
+
+#pragma mark - topBar buttons
 
 - (IBAction)addContactButton:(UIBarButtonItem *)sender {
     UIStoryboard *myStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -133,26 +86,22 @@
     if ([self.contactsTableView isEditing]) {
         
         [self.contactsTableView setEditing:NO animated:YES];
-        
     }
     else {
         
         // Turn on edit mode
-        
         [self.contactsTableView setEditing:YES animated:YES];
     }
     
 }
 
+#pragma mark - gestures
+
 - (IBAction)swipeToRight:(UISwipeGestureRecognizer *)sender {
     [self.tabBarController setSelectedIndex:1];
 }
 
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
+#pragma mark - UITableView methods
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -180,7 +129,6 @@
     return [self.dataSource sizeOfList];
 }
 
-
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UIStoryboard *myStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -189,7 +137,6 @@
     selectedContactViewController.contact = [self.dataSource.listOfContacts objectAtIndex:indexPath.row];
     selectedContactViewController.initContactsDelegate = self;
     [self.navigationController pushViewController:selectedContactViewController animated:YES];
-    
     
 }
 
@@ -203,11 +150,32 @@
             [NSKeyedArchiver archiveRootObject:self.dataSource toFile:self.path];
         }
         
-        
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
     }
+}
+
+#pragma mark - initContactsFieldDelegate Methods
+
+-(void) saveEditedContact : (MyContact*)aContact
+{
+    [self.dataSource.listOfContacts replaceObjectAtIndex:self.selectedRow withObject:aContact];
+    if(self.path)
+    {
+        [NSKeyedArchiver archiveRootObject:self.dataSource toFile:self.path];
+    }
+    [self.contactsTableView reloadData];
+}
+
+-(void) saveNewContact:(MyContact *)aContact
+{
+    [self.dataSource.listOfContacts addObject:aContact];
     
+    if(self.path)
+    {
+        [NSKeyedArchiver archiveRootObject:self.dataSource toFile:self.path];
+    }
+    [self.contactsTableView reloadData];
 }
 
 @end

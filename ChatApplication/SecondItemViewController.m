@@ -10,26 +10,20 @@
 #import "ChatViewController.h"
 #import "ChatMessageModel.h"
 
+NSString *const messageFileName = @"listOfMSG.plist";
+
 @interface SecondItemViewController () <UITableViewDataSource,UITableViewDelegate>
-- (IBAction)swipeRightToLeft:(UISwipeGestureRecognizer *)sender;
 @property (strong, nonatomic) IBOutlet UISwipeGestureRecognizer *swipeLeftToRightProperty;
-- (IBAction)swipeLeftToRight:(UISwipeGestureRecognizer *)sender;
 @property (weak, nonatomic) IBOutlet UITableView *recentsTableView;
-- (IBAction)pinchGestureRefresh:(UIPinchGestureRecognizer *)sender;
 @property (strong, nonatomic) IBOutlet UIPinchGestureRecognizer *pinchGestureProperty;
+
+- (IBAction)swipeRightToLeft:(UISwipeGestureRecognizer *)sender;
+- (IBAction)swipeLeftToRight:(UISwipeGestureRecognizer *)sender;
+- (IBAction)pinchGestureRefresh:(UIPinchGestureRecognizer *)sender;
 
 @end
 
 @implementation SecondItemViewController
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
@@ -37,24 +31,10 @@
     [self.swipeLeftToRightProperty setDirection:(UISwipeGestureRecognizerDirectionLeft| UISwipeGestureRecognizerDirectionLeft )];
     [self.view addGestureRecognizer:self.swipeLeftToRightProperty];
     [self.view addGestureRecognizer:self.pinchGestureProperty];
-    
-    //self.recentsTableView.delegate = self;
-    //self.recentsTableView.dataSource = self;
     self.recentMessages = [[NSMutableArray alloc]init];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-- (IBAction)swipeRightToLeft:(UISwipeGestureRecognizer *)sender {
-    [self.tabBarController setSelectedIndex:0];
-}
-- (IBAction)swipeLeftToRight:(UISwipeGestureRecognizer *)sender {
-    [self.tabBarController setSelectedIndex:2];
-}
+#pragma mark - UITableViewMethods
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -67,7 +47,6 @@
     
     cell.textLabel.text = [[self.recentMessages objectAtIndex:indexPath.row]userName];
     
-    NSLog(@"asdasd");
     return cell;
 }
 
@@ -76,11 +55,22 @@
     return [self.recentMessages count];
 }
 
+#pragma mark - gestures
+
 - (IBAction)pinchGestureRefresh:(UIPinchGestureRecognizer *)sender {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *path = [documentsDirectory stringByAppendingPathComponent:@"listOfMSG.plist"];
+    NSString *path = [documentsDirectory stringByAppendingPathComponent:messageFileName];
     self.recentMessages = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
     [self.recentsTableView reloadData];
 }
+
+- (IBAction)swipeRightToLeft:(UISwipeGestureRecognizer *)sender {
+    [self.tabBarController setSelectedIndex:0];
+}
+
+- (IBAction)swipeLeftToRight:(UISwipeGestureRecognizer *)sender {
+    [self.tabBarController setSelectedIndex:2];
+}
+
 @end
