@@ -90,6 +90,10 @@
 #pragma mark - save button
 
 - (IBAction)saveChanges:(UIButton *)sender {
+    [self saveNewContact];
+}
+
+- (void)saveNewContact {
     MyContact *tempContact = [[MyContact alloc]init];
     tempContact.firstName = self.firstNameTextField.text;
     tempContact.lastName = self.lastNameTextField.text;
@@ -106,17 +110,21 @@
     
     if(self.addNewContactWasPressed)
     {
-        [self.initContactsDelegate saveNewContact:tempContact];
+        if(![tempContact.firstName isEqualToString:@""])
+        {
+            [self.initContactsDelegate saveNewContact:tempContact];
+            self.addNewContactWasPressed = NO;
+            [self.view endEditing:YES];
+        }
+        return;
     }
     
-    else
+    if(self.editContactWasPressed)
     {
         [self.initContactsDelegate saveEditedContact:tempContact];
-        
     }
     
     [self.view endEditing:YES];
-    
 }
 
 #pragma mark - methods for dismissing the keyboard

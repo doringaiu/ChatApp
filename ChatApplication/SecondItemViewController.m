@@ -7,7 +7,6 @@
 //
 
 #import "SecondItemViewController.h"
-#import "ChatViewController.h"
 #import "ChatMessageModel.h"
 
 NSString *const messageFileName = @"listOfMSG.plist";

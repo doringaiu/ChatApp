@@ -60,11 +60,11 @@ NSString *const topBarTitle = @"My Contacts";
         self.path = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat: contactsFileName] ];
     }
     
-    static bool appStarted = true;
+    static BOOL appStarted = YES;
     if(appStarted)
     {
         self.dataSource = [NSKeyedUnarchiver unarchiveObjectWithFile:self.path];
-        appStarted = false;
+        appStarted = NO;
     }
     
 }
@@ -135,6 +135,8 @@ NSString *const topBarTitle = @"My Contacts";
     SelectedContactViewController *selectedContactViewController = [myStoryBoard instantiateViewControllerWithIdentifier:@"selectedContactCntrlr"];
     self.selectedRow = indexPath.row;
     selectedContactViewController.contact = [self.dataSource.listOfContacts objectAtIndex:indexPath.row];
+    selectedContactViewController.editContactWasPressed = YES;
+    selectedContactViewController.addNewContactWasPressed = NO;
     selectedContactViewController.initContactsDelegate = self;
     [self.navigationController pushViewController:selectedContactViewController animated:YES];
     
